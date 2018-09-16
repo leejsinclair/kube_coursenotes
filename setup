@@ -1,0 +1,24 @@
+#!/bin/bash
+echo "Clean up"
+minikube delete
+rm -rf ${HOME}/.minikube
+
+echo "Install required libraries"
+# Install libvirt and qemu-kvm on your system, e.g.
+# Debian/Ubuntu (for older Debian/Ubuntu versions, you may have to use libvirt-bin instead of libvirt-clients and libvirt-daemon-system)
+sudo apt install libvirt-clients libvirt-daemon-system qemu-kvm
+
+# Add yourself to the libvirt group so you don't need to sudo
+# NOTE: For older Debian/Ubuntu versions change the group to `libvirtd`
+sudo usermod -a -G libvirt $(whoami)
+
+echo "Install driver"
+curl -Lo docker-machine-driver-kvm2 https://storage.googleapis.com/minikube/releases/latest/docker-machine-driver-kvm2 \
+&& chmod +x docker-machine-driver-kvm2 \
+&& sudo cp docker-machine-driver-kvm2 /usr/local/bin/ \
+&& rm docker-machine-driver-kvm2
+
+# Update your current session for the group change to take effect
+# NOTE: For older Debian/Ubuntu versions change the group to `libvirtd`
+echo "Reload"
+newgrp libvirt

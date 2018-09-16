@@ -1,0 +1,13 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: fleetman-mongodb
+spec:
+  selector:
+    # Has to match workload name
+    app: mongodb
+  ports:
+    - name: mongoport
+      port: 27017
+  type: ClusterIP

@@ -1,0 +1,55 @@
+# What do want?
+apiVersion: v1
+# https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#persistentvolumeclaim-v1-core
+kind: PersistentVolumeClaim
+metadata:
+  # Same as name in workload file
+  name: mongo-pvc
+spec:
+  # https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1
+  # Refers to the below definition
+  storageClassName: mylocalstorage
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 20Gi
+---
+# How do we want it implemented
+# Creates a **storage class** called **mylocalstorage**
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: local-storage
+spec:
+  # Defines the storage class **mylocalstorage**
+  storageClassName: mylocalstorage
+  capacity:
+    storage: 20Gi
+  # accessModes is required
+  accessModes:
+    - ReadWriteOnce
+  # This is the local storage className https://kubernetes.io/docs/concepts/storage/volumes/#types-of-volumes
+  # When moving to AWS **hostPath** will be changed to **awsElasticBlockStore**
+  # Important: You must create an EBS volume using **aws ec2 create-volume** or the AWS API before you can use it.
+  # e.g. aws ec2 create-volume --availability-zone=eu-west-1a --size=10 --volume-type=gp2
+  hostPath:
+    path: "/mnt/some new/directory/structure/"
+    type: DirectoryOrCreate
+
+---
+# How do we want it implemented
+# Creates a **storage class** called **mylocalstorage**
+# apiVersion: v1
+# kind: PersistentVolume
+# metadata:
+#   name: local-storage
+# spec:
+#   storageClassName: awsstorage
+#   capacity:
+#     storage: 20Gi
+#   accessModes:
+#     - ReadWriteOnce
+#   awsElasticBlockStore:
+#       volumeID: <volume-id>
+#       fsType: ext4

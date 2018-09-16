@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: queue
+spec:
+  # selector/matchLabels is required for replicasets and deployments
+  selector:
+    matchLabels:
+      app: queue
+  replicas: 1
+  template:
+    # Pod declaration
+    metadata:
+      labels:
+        app: queue
+    spec:
+      containers:
+      - name: queue
+        image: richardchesterwood/k8s-fleetman-queue:release2

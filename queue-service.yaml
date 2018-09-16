@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  # Used in DNS lookup
+  name: fleetman-queue
+
+spec:
+  # This defines which pods are going to be represented by this Service
+  # The service becomes a network endpoint for either other services
+  # or maybe external users to connect to (eg browser)
+  selector:
+    app: queue
+
+  ports:
+    # e.g. -p 80:80
+    # name is just a label
+    - name: http
+      # Port to expose to the cluster
+      port: 8161
+      nodePort: 30010
+
+    - name: endpoint
+      port: 61616
+  # load Balancer does not work in minikube
+  # type: loadBalancer
+  
+  # Only available from within the cluster, not the web browser
+  # private service, stable IP address. Pods will come and go but
+  # services are stable.
+  # type: ClusterIP
+
+  type: NodePort

@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fleetman-webapp
+
+spec:
+  # this defines which pods are going to be represented by this service
+  # the service becomes aa network end-point for other services or
+  # external users to connect to: e.g. browser
+  selector:
+    # Selectors can be used to deploy specific versions of PODS
+    app: webapp
+
+  ports:
+    # e.g. -p 80:80
+    # name is just a label
+    - name: http
+      # Port to expose to the cluster
+      port: 80
+      # Port inside the container
+      targetPort: 80
+      # Port to expose outside the cluster
+      nodePort: 30080
+  # load Balancer does not work in minikube
+  # type: loadBalancer
+
+  # Only available from within the cluster, not the web browser
+  # private service, stable IP address. Pods will come and go but
+  # services are stable.
+  # type: ClusterIP
+
+  type: NodePort

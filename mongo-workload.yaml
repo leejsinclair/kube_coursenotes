@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+spec:
+  selector:
+    matchLabels:
+      app: mongodb
+  replicas: 1
+  template: # template for the pods
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+      - name: mongodb
+        image: mongo:3.6.5-jessie
+        # What to mount?
+        volumeMounts:
+          - name: mongo-persistent-storage
+            mountPath: /data/db
+      # https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.11/#volume-v1-core
+      volumes:
+        # Same as containers.volumeMounts.name
+        - name: mongo-persistent-storage
+          # pointer to the configuration of HOW we want the mount to be implemented
+          persistentVolumeClaim:
+            # pvc = persistant volume claim, named so for easier reading comprehension
+            claimName: mongo-pvc
